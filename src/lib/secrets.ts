@@ -36,7 +36,7 @@ export async function getDatabaseCredentials(): Promise<DatabaseCredentials> {
   try {
     const response = await client.send(
       new GetSecretValueCommand({
-        SecretId: process.env.DATABASE_SECRET_ARN as string,
+        SecretId: process.env.DATABASE_SECRET_NAME as string,
       })
     );
 
@@ -47,11 +47,11 @@ export async function getDatabaseCredentials(): Promise<DatabaseCredentials> {
     // Parse the secret JSON
     const secretData = JSON.parse(response.SecretString);
 
-    // Cache the secret
+    // Combine secret data with environment variables
     cachedSecret = {
-      host: secretData.host,
-      port: parseInt(secretData.port, 10),
-      database: secretData.dbname,
+      host: process.env.DATABASE_HOST as string,
+      port: parseInt(process.env.DATABASE_PORT || "3306", 10),
+      database: process.env.DATABASE_NAME as string,
       user: secretData.username,
       password: secretData.password,
     };

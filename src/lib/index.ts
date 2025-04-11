@@ -1,10 +1,14 @@
-import { drizzle } from "drizzle-orm/mysql2";
-import { getDatabaseCredentials } from "../lib/secrets";
+import { drizzle, MySql2Database } from "drizzle-orm/mysql2";
+import { getDatabaseCredentials } from "@/lib/secrets";
 import mysql from "mysql2/promise";
 
-let db = null;
+// Import your schema to provide type information
+import * as schema from "./schema";
 
-export async function getDb() {
+// Define the type for your database
+let db: MySql2Database<typeof schema> | null = null;
+
+export async function getDb(): Promise<MySql2Database<typeof schema>> {
   if (db) return db;
 
   const credentials = await getDatabaseCredentials();
@@ -16,11 +20,11 @@ export async function getDb() {
     password: credentials.password,
     database: credentials.database,
     ssl: {
-      rejectUnauthorized: true,
+      rejectUnauthorized: false,
     },
   });
 
-  db = drizzle(pool);
+  db = drizzle(pool, { schema, mode: "default" });
 
   return db;
 }

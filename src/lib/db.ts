@@ -1,6 +1,6 @@
 // For MySQL
 import mysql, { Pool, RowDataPacket, ResultSetHeader } from "mysql2/promise";
-import { getDatabaseCredentials } from "./secrets";
+import { getDatabaseCredentials } from "@/lib/secrets";
 
 let pool: Pool | null = null;
 
